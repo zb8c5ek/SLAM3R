@@ -156,6 +156,71 @@ def load_images(folder_or_list, size, square_ok=False,
         print(f' ({len(imgs)} images loaded)')
     return imgs
 
+def load_single_image(frame_bgr: np.ndarray, 
+                         size: int = 224, 
+                         square_ok: bool = False,
+                         device: str = 'cpu') -> dict:
+    """
+    Process a single frame given as a NumPy array, following the same logic as the original load_images function.
+    
+    :param frame_bgr: Input NumPy image array (H, W, 3), must be in OpenCV's default BGR order.
+    :param size: Target size, typically 224.
+    :param square_ok: Whether to allow square output (when size is not 224).
+    :param device: Device to place the output Tensor ('cpu' or 'cuda').
+    :return: A standard dictionary containing the processed image information.
+    """
+    img_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
+    img = PIL.Image.fromarray(img_rgb)
+    
+    img = PIL.ImageOps.exif_transpose(img)
+
+    W1, H1 = img.size
+    
+
+    if size == 224:
+        if W1 < H1: 
+            new_w = size
+            new_h = round(size * H1 / W1)
+        else: 
+            new_h = size
+            new_w = round(size * W1 / H1)
+        resized_img = img.resize((new_w, new_h), PIL.Image.Resampling.LANCZOS)
+    else:
+        if W1 < H1: 
+            new_h = size
+            new_w = round(size * W1 / H1)
+        else: 
+            new_w = size
+            new_h = round(size * H1 / W1)
+        resized_img = img.resize((new_w, new_h), PIL.Image.Resampling.LANCZOS)
+
+    W, H = resized_img.size
+    cx, cy = W // 2, H // 2
+    if size == 224:
+
+        half = size // 2
+        cropped_img = resized_img.crop((cx - half, cy - half, cx + half, cy + half))
+    else:
+
+        halfw = (cx // 16) * 8
+        halfh = (cy // 16) * 8
+        if not square_ok and W == H:
+            halfh = 3 * halfw // 4
+        cropped_img = resized_img.crop((cx - halfw, cy - halfh, cx + halfw, cy + halfh))
+    
+    W2, H2 = cropped_img.size
+
+    img_tensor = ImgNorm(cropped_img)[None].to(device) 
+    
+    processed_dict = dict(
+        img=img_tensor, 
+        true_shape=torch.tensor([H2, W2], dtype=torch.int32).to(device),
+        idx=0, 
+        instance='0', 
+        label='single_frame'
+    )
+    return processed_dict
+
 
 
 def crop_and_resize(image, depthmap, intrinsics, long_size, rng=None, info=None, use_crop=False):

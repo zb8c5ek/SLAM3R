@@ -1,12 +1,8 @@
 #!/bin/bash
 
-######################################################################################
-# set the img_dir below to the directory of the set of images you want to reconstruct
-# set the postfix below to the format of the rgb images in the img_dir
-######################################################################################
-TEST_DATASET="Seq_Data(img_dir='data/Replica_demo/room0', postfix='.jpg', \
-img_size=224, silent=False, sample_freq=1, \
-start_idx=0, num_views=-1, start_freq=1, to_tensor=True)"
+
+TEST_DATASET="data/Replica_demo/room0"
+
 
 ######################################################################################
 # set the parameters for whole scene reconstruction below
@@ -38,4 +34,6 @@ python recon.py \
 --conf_thres_i2p $CONF_THRES_I2P \
 --num_points_save $NUM_POINTS_SAVE \
 --update_buffer_intv $UPDATE_BUFFER_INTV \
---max_num_register $MAX_NUM_REGISTER
+--max_num_register $MAX_NUM_REGISTER \
+# --online \
+--retrieve_freq 10 \

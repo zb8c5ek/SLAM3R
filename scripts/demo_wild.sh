@@ -2,19 +2,19 @@
 
 
 ######################################################################################
-# set the img_dir below to the directory of the set of images you want to reconstruct
-# set the postfix below to the format of the rgb images in the img_dir
+# Your input can be a directory of images, a video file, and a webcamera url.
+# For directory of images, set the TEST_DATASET to path like: data/test/myimages
+# For video, set the TEST_DATASET to path like: data/test/myvideo.mp4
+# For webcamera, set the TEST_DATASET to url like: http://rab:12345678@192.168.137.83:8081
 ######################################################################################
-TEST_DATASET="Seq_Data(img_dir='data/wild/Library', postfix='.png', \
-img_size=224, silent=False, sample_freq=1, \
-start_idx=0, num_views=-1, start_freq=1, to_tensor=True)"
+TEST_DATASET="data/wild/Library" 
 
 ######################################################################################
 # set the parameters for whole scene reconstruction below
 # for defination of these parameters, please refer to the recon.py
 ######################################################################################
-TEST_NAME="wild_demo"
-KEYFRAME_STRIDE=-1     #-1 for auto-adaptive keyframe stride selection
+TEST_NAME="Wild_demo"
+KEYFRAME_STRIDE=3     #-1 for auto-adaptive keyframe stride selection
 WIN_R=5
 MAX_NUM_REGISTER=10
 NUM_SCENE_FRAME=10
@@ -23,6 +23,7 @@ CONF_THRES_L2W=12
 CONF_THRES_I2P=1.5
 NUM_POINTS_SAVE=1000000
 
+RETRIEVE_FREQ=1
 UPDATE_BUFFER_INTV=1
 BUFFER_SIZE=100       # -1 if size is not limited
 BUFFER_STRATEGY="reservoir"  # or "fifo"
@@ -51,4 +52,6 @@ python recon.py \
 --keyframe_adapt_min $KEYFRAME_ADAPT_MIN \
 --keyframe_adapt_max $KEYFRAME_ADAPT_MAX \
 --keyframe_adapt_stride $KEYFRAME_ADAPT_STRIDE \
---save_preds
+--retrieve_freq $RETRIEVE_FREQ \
+--save_preds \
+# --online  # Uncomment it if you want to reconstruct it online

@@ -14,7 +14,7 @@ UPDATE_BUFFER_INTV=3
 MAX_NUM_REGISTER=10
 WIN_R=5
 NUM_SCENE_FRAME=10
-INITIAL_WINSIZE=5 
+INITIAL_WINSIZE=5
 CONF_THRES_L2W=10
 CONF_THRES_I2P=1.5
 NUM_POINTS_SAVE=1000000
@@ -36,4 +36,4 @@ python recon.py \
 --update_buffer_intv $UPDATE_BUFFER_INTV \
 --max_num_register $MAX_NUM_REGISTER \
 # --online \
---retrieve_freq 10 \
+--retrieve_freq 10
